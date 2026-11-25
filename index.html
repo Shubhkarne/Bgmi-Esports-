@@ -1,0 +1,1965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Indian Esports Studio &amp; KIE Hub — Free Scrims, LFT &amp; Rankings</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            void: '#070910',
+            surface: '#0f1422',
+            surfaceLight: '#161e33',
+            borderDark: '#232f4d',
+            neonGold: '#f59e0b',
+            neonCyan: '#06b6d4',
+            neonEmerald: '#10b981',
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    * {
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      background-color: #070910;
+      color: #f8fafc;
+      font-family: 'Inter', sans-serif;
+    }
+    .neon-glow-gold {
+      box-shadow: 0 0 24px -4px rgba(245, 158, 11, 0.35);
+    }
+    .neon-glow-cyan {
+      box-shadow: 0 0 24px -4px rgba(6, 182, 212, 0.32);
+    }
+    .neon-glow-purple {
+      box-shadow: 0 0 24px -4px rgba(168, 85, 247, 0.32);
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0b0f1a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #232f4d;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-amber-500 selection:text-slate-950">
+
+  <!-- TOAST MESSAGE BANNER -->
+  <div id="toast" role="status" aria-live="polite"
+       class="fixed bottom-5 left-1/2 -translate-x-1/2 translate-y-6 opacity-0 pointer-events-none z-50 px-4 py-2.5 rounded-full bg-slate-900 border border-cyan-500/40 text-xs sm:text-sm font-bold text-white shadow-2xl transition-all duration-200 whitespace-nowrap max-w-[92vw] truncate">
+  </div>
+
+  <!-- STICKY TOP HEADER -->
+  <header class="sticky top-0 z-40 bg-void/90 backdrop-blur-md border-b border-borderDark">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 via-orange-500 to-cyan-500 p-0.5 shadow-lg shrink-0">
+          <div class="w-full h-full bg-void rounded-[10px] flex items-center justify-center font-black text-amber-400 text-sm tracking-tighter">
+            IND
+          </div>
+        </div>
+        <div class="min-w-0">
+          <h1 class="text-base sm:text-lg font-black tracking-tight text-white leading-tight truncate">
+            Indian Esports <span class="text-amber-400">Studio</span>
+          </h1>
+          <p class="text-[11px] font-semibold text-cyan-400 truncate">
+            Scrims • LFT Cards • KIE Hub &amp; Rankings
+          </p>
+        </div>
+      </div>
+
+      <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 text-xs font-extrabold shrink-0">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        100% Free
+      </span>
+    </div>
+  </header>
+
+  <!-- MAIN WORKSPACE CONTAINER -->
+  <main class="max-w-6xl w-full mx-auto px-3 sm:px-5 pt-4 pb-16 flex-1">
+
+    <!-- THREE-TAB PRIMARY NAVIGATION -->
+    <nav aria-label="Esports Studio Sections" class="grid grid-cols-3 gap-1.5 sm:gap-2 p-1.5 rounded-2xl bg-surface border border-borderDark mb-5">
+      <button id="tab-scrims" type="button" onclick="switchMainTab('scrims')"
+              class="p-2.5 sm:p-3 rounded-xl font-extrabold text-[11px] sm:text-sm transition-all flex items-center justify-center gap-1.5 bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 neon-glow-gold min-h-[44px]">
+        <span>🏆 Scrims</span>
+      </button>
+      <button id="tab-lft" type="button" onclick="switchMainTab('lft')"
+              class="p-2.5 sm:p-3 rounded-xl font-extrabold text-[11px] sm:text-sm transition-all flex items-center justify-center gap-1.5 text-slate-400 hover:text-white min-h-[44px]">
+        <span>🎮 LFT Card</span>
+      </button>
+      <button id="tab-kie" type="button" onclick="switchMainTab('kie')"
+              class="p-2.5 sm:p-3 rounded-xl font-extrabold text-[11px] sm:text-sm transition-all flex items-center justify-center gap-1.5 text-slate-400 hover:text-white min-h-[44px]">
+        <span>🔥 KIE Hub</span>
+      </button>
+    </nav>
+
+    <!-- ========================================================================
+         TAB 1: SCRIMS POINTS TABLE GENERATOR
+         ======================================================================== -->
+    <section id="panel-scrims" class="space-y-5">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+
+        <!-- LEFT: LOBBY SETTINGS & MATCH ENTRY -->
+        <div class="lg:col-span-6 bg-surface border border-borderDark rounded-2xl p-4 sm:p-5 space-y-4 shadow-xl">
+          <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-borderDark">
+            <h2 class="text-sm sm:text-base font-extrabold text-white flex items-center gap-2">
+              <span>📋 Match Result Entry</span>
+            </h2>
+            <div class="flex items-center gap-2">
+              <button type="button" onclick="loadScrimsDemo()"
+                      class="px-3 py-1.5 rounded-lg bg-cyan-500/15 border border-cyan-500/40 text-cyan-300 text-xs font-bold hover:bg-cyan-500/25 min-h-[36px]">
+                Load Sample Data
+              </button>
+              <button type="button" onclick="clearAllScrims()"
+                      class="px-3 py-1.5 rounded-lg bg-rose-500/15 border border-rose-500/40 text-rose-300 text-xs font-bold hover:bg-rose-500/25 min-h-[36px]">
+                Clear All
+              </button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label for="tourney-title" class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                Tournament / Org Name
+              </label>
+              <input id="tourney-title" type="text" value="MUMBAI NIGHT SCRIMS S5" oninput="handleScrimsMetaChange()"
+                     class="w-full px-3 py-2.5 rounded-xl bg-void border border-borderDark text-sm text-white font-semibold focus:outline-none focus:border-amber-400 min-h-[44px]" />
+            </div>
+            <div>
+              <label for="lobby-subtitle" class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                Lobby / Group Tag
+              </label>
+              <input id="lobby-subtitle" type="text" value="GROUP A • T1 CUSTOMS" oninput="handleScrimsMetaChange()"
+                     class="w-full px-3 py-2.5 rounded-xl bg-void border border-borderDark text-sm text-white font-semibold focus:outline-none focus:border-amber-400 min-h-[44px]" />
+            </div>
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Matches (Unlimited Free)</span>
+              <button id="delete-match-btn" type="button" onclick="deleteCurrentMatch()"
+                      class="hidden text-[11px] font-bold text-rose-400 hover:text-rose-300 py-1 px-2">
+                Delete Current Match
+              </button>
+            </div>
+            <div id="match-bar" class="flex flex-wrap gap-2"></div>
+          </div>
+
+          <div class="p-3 rounded-xl bg-void/90 border border-borderDark text-xs text-slate-300 leading-relaxed">
+            <span class="text-amber-400 font-extrabold">Standard Scoring:</span>
+            #1 = 10, #2 = 6, #3 = 5, #4 = 4, #5 = 3, #6 = 2, #7–8 = 1, #9+ = 0 + <span class="text-cyan-400 font-bold">1 pt/Finish</span>.
+            <span class="text-slate-400 block mt-0.5">Tie-breaker: Total Pts → WWCDs → Placement Pts → Finish Pts.</span>
+          </div>
+
+          <form id="match-entry-form" onsubmit="handleAddMatchEntry(event)" class="space-y-3">
+            <div class="grid grid-cols-12 gap-2.5">
+              <div class="col-span-6">
+                <label for="entry-team" class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                  Team Name
+                </label>
+                <input id="entry-team" type="text" placeholder="e.g. Team Soul" required
+                       class="w-full px-3 py-2.5 rounded-xl bg-void border border-borderDark text-sm text-white focus:outline-none focus:border-amber-400 min-h-[44px]" />
+              </div>
+              <div class="col-span-3">
+                <label for="entry-rank" class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                  Rank
+                </label>
+                <input id="entry-rank" type="number" min="1" max="25" value="1" required
+                       class="w-full px-3 py-2.5 rounded-xl bg-void border border-borderDark text-sm text-white text-center font-bold focus:outline-none focus:border-amber-400 min-h-[44px]" />
+              </div>
+              <div class="col-span-3">
+                <label for="entry-kills" class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                  Finishes
+                </label>
+                <input id="entry-kills" type="number" min="0" max="80" value="8" required
+                       class="w-full px-3 py-2.5 rounded-xl bg-void border border-borderDark text-sm text-white text-center font-bold focus:outline-none focus:border-amber-400 min-h-[44px]" />
+              </div>
+            </div>
+
+            <button type="submit"
+                    class="w-full p-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-extrabold text-sm shadow-lg transition-all min-h-[46px]">
+              + Save Team in <span id="active-match-label">Match 1</span>
+            </button>
+          </form>
+
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                Teams in <span id="active-match-list-label" class="text-white">Match 1</span>
+              </span>
+              <span id="active-match-count" class="text-[11px] font-bold text-cyan-400">0 Teams</span>
+            </div>
+            <div id="match-entries-list" class="space-y-2 max-h-60 overflow-y-auto pr-1"></div>
+          </div>
+        </div>
+
+        <!-- RIGHT: OVERALL STANDINGS & CANVAS EXPORT -->
+        <div class="lg:col-span-6 bg-surface border border-borderDark rounded-2xl p-4 sm:p-5 space-y-4 shadow-xl">
+          <div class="flex items-center justify-between pb-3 border-b border-borderDark">
+            <h2 class="text-sm sm:text-base font-extrabold text-white flex items-center gap-2">
+              <span>🏅 Overall Standings</span>
+            </h2>
+            <span id="total-matches-badge"
+                  class="px-2.5 py-1 rounded-lg bg-amber-500/15 border border-amber-500/40 text-amber-300 text-xs font-extrabold">
+              1 Match
+            </span>
+          </div>
+
+          <div class="overflow-x-auto rounded-xl border border-borderDark">
+            <table class="w-full text-left border-collapse text-xs sm:text-sm">
+              <thead>
+                <tr class="bg-surfaceLight text-slate-400 text-[11px] font-extrabold uppercase tracking-wider">
+                  <th class="py-2.5 px-2.5">#</th>
+                  <th class="py-2.5 px-2.5">Team</th>
+                  <th class="py-2.5 px-2 text-center">WWCD</th>
+                  <th class="py-2.5 px-2 text-center">Place</th>
+                  <th class="py-2.5 px-2 text-center">Kills</th>
+                  <th class="py-2.5 px-2.5 text-right text-amber-400">Total</th>
+                </tr>
+              </thead>
+              <tbody id="standings-tbody" class="divide-y divide-borderDark"></tbody>
+            </table>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <button type="button" onclick="downloadStandingsPNG()"
+                    class="p-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg min-h-[46px]">
+              <span>⬇️ Download PNG Graphic</span>
+            </button>
+            <button type="button" onclick="copyStandingsText()"
+                    class="p-3 rounded-xl bg-cyan-500/15 border border-cyan-500/40 text-cyan-300 hover:bg-cyan-500/25 font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 min-h-[46px]">
+              <span>📋 Copy WhatsApp / Discord</span>
+            </button>
+          </div>
+
+          <div>
+            <span class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+              Live Shareable Standings Graphic (HD PNG)
+            </span>
+            <div class="p-2 rounded-xl bg-void border border-borderDark">
+              <canvas id="standings-canvas" class="w-full h-auto rounded-lg block"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================
+         TAB 2: LFT & SQUAD ROSTER CARD MAKER
+         ======================================================================== -->
+    <section id="panel-lft" class="hidden space-y-5">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+
+        <!-- LEFT: PLAYER / SQUAD INPUTS -->
+        <div class="lg:col-span-6 bg-surface border border-borderDark rounded-2xl p-4 sm:p-5 space-y-4 shadow-xl">
+          <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-borderDark">
+            <h2 class="text-sm sm:text-base font-extrabold text-white">🎨 Card Customizer</h2>
+            <button type="button" onclick="loadLftDemo()"
+                    class="px-3 py-1.5 rounded-lg bg-cyan-500/15 border border-cyan-500/40 text-cyan-300 text-xs font-bold hover:bg-cyan-500/25 min-h-[36px]">
+              Load Sample Profile
+            </button>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 p-1 rounded-xl bg-void border border-borderDark">
+            <button id="mode-player-btn" type="button" onclick="setCardMode('player')"
+                    class="p-2.5 rounded-lg text-xs font-extrabold bg-surfaceLight text-white border border-borderDark transition-all min-h-[42px]">
+              👤 Player LFT Card
+            </button>
+            <button id="mode-roster-btn" type="button" onclick="setCardMode('roster')"
+                    class="p-2.5 rounded-lg text-xs font-extrabold text-slate-400 hover:text-white transition-all min-h-[42px]">
+              🛡️ Squad Roster (4+1)
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label for="lft-game" class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                Esports Title
+              </label>
+              <select id="lft-game" onchange="handleLftChange()"
+                      class="w-full px-3 py-2.5 rounded-xl bg-void border border-borderDark text-sm text-white font-semibold focus:outline-none focus:border-cyan-400 min-h-[44px]">
+                <option value="BGMI">BGMI</option>
+                <option value="FREE FIRE MAX">Free Fire MAX</option>
+                <option value="VALORANT">Valorant</option>
+              </select>
+            </div>
+            <div>
+              <label id="lft-name-label" for="lft-name" class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                Player IGN
+              </label>
+              <input id="lft-name" type="text" value="REAPERxIGL" oninput="handleLftChange()"
+                     class="w-full px-3 py-2.5 rounded-xl bg-void border border-borderDark text-sm text-white font-semibold focus:outline-none focus:border-cyan-400 min-h-[44px]" />
+            </div>
+          </div>
+
+          <div id="player-fields" class="space-y-3">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label for="lft-role" class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                  Primary Role
+                </label>
+                <select id="lft-role" onchange="handleLftChange()"
+                        class="w-full px-3 py-2.5 rounded-xl bg-void border border-borderDark text-sm text-white font-semibold focus:outline-none focus:border-cyan-400 min-h-[44px]">
+                  <option value="IGL (In-Game Leader)">IGL (In-Game Leader)</option>
+                  <option value="Assaulter / Entry Fragger">Assaulter / Entry Fragger</option>
+                  <option value="Support / Medic">Support / Medic</option>
+                  <option value="Sniper / Entry">Sniper / Entry</option>
+                </select>
+              </div>
+              <div>
+                <label for="lft-device" class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                  Device / FPS
+                </label>
+                <input id="lft-device" type="text" value="iQOO 12 • 120 FPS" oninput="handleLftChange()"
+                       class="w-full px-3 py-2.5 rounded-xl bg-void border border-borderDark text-sm text-white focus:outline-none focus:border-cyan-400 min-h-[44px]" />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label for="lft-stats" class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                  Peak Rank / K/D
+                </label>
+                <input id="lft-stats" type="text" value="Conqueror • 5.8 K/D" oninput="handleLftChange()"
+                       class="w-full px-3 py-2.5 rounded-xl bg-void border border-borderDark text-sm text-white focus:outline-none focus:border-cyan-400 min-h-[44px]" />
+              </div>
+              <div>
+                <label for="lft-exp" class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                  Experience / Highlights
+                </label>
+                <input id="lft-exp" type="text" value="T1/T2 Scrims • BGIS R3" oninput="handleLftChange()"
+                       class="w-full px-3 py-2.5 rounded-xl bg-void border border-borderDark text-sm text-white focus:outline-none focus:border-cyan-400 min-h-[44px]" />
+              </div>
+            </div>
+          </div>
+
+          <div id="roster-fields" class="hidden space-y-3">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label for="roster-p1" class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                  Player 1 (IGL)
+                </label>
+                <input id="roster-p1" type="text" value="REAPERxIGL" oninput="handleLftChange()"
+                       class="w-full px-3 py-2.5 rounded-xl bg-void border border-borderDark text-sm text-white focus:outline-none focus:border-cyan-400 min-h-[44px]" />
+              </div>
+              <div>
+                <label for="roster-p2" class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                  Player 2 (Assaulter)
+                </label>
+                <input id="roster-p2" type="text" value="BLAZEop" oninput="handleLftChange()"
+                       class="w-full px-3 py-2.5 rounded-xl bg-void border border-borderDark text-sm text-white focus:outline-none focus:border-cyan-400 min-h-[44px]" />
+              </div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label for="roster-p3" class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                  Player 3 (Support)
+                </label>
+                <input id="roster-p3" type="text" value="VIPERx7" oninput="handleLftChange()"
+                       class="w-full px-3 py-2.5 rounded-xl bg-void border border-borderDark text-sm text-white focus:outline-none focus:border-cyan-400 min-h-[44px]" />
+              </div>
+              <div>
+                <label for="roster-p4" class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                  Player 4 (Sniper / Entry)
+                </label>
+                <input id="roster-p4" type="text" value="ZENITH" oninput="handleLftChange()"
+                       class="w-full px-3 py-2.5 rounded-xl bg-void border border-borderDark text-sm text-white focus:outline-none focus:border-cyan-400 min-h-[44px]" />
+              </div>
+            </div>
+            <div>
+              <label for="roster-sub" class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                5th Sub / Open Tryout Slot
+              </label>
+              <input id="roster-sub" type="text" value="SUB: KRYPTON (OR LFP 5TH)" oninput="handleLftChange()"
+                     class="w-full px-3 py-2.5 rounded-xl bg-void border border-borderDark text-sm text-white focus:outline-none focus:border-cyan-400 min-h-[44px]" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label for="lft-avail" class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                Grind Timing / Availability
+              </label>
+              <input id="lft-avail" type="text" value="Daily 7 PM – 1 AM IST" oninput="handleLftChange()"
+                     class="w-full px-3 py-2.5 rounded-xl bg-void border border-borderDark text-sm text-white focus:outline-none focus:border-cyan-400 min-h-[44px]" />
+            </div>
+            <div>
+              <label for="lft-contact" class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                Instagram / Discord Handle
+              </label>
+              <input id="lft-contact" type="text" value="@reaper_bgmi" oninput="handleLftChange()"
+                     class="w-full px-3 py-2.5 rounded-xl bg-void border border-borderDark text-sm text-white focus:outline-none focus:border-cyan-400 min-h-[44px]" />
+            </div>
+          </div>
+
+          <div>
+            <span class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+              Neon Card Accent Theme
+            </span>
+            <div id="swatch-row" class="flex flex-wrap gap-3">
+              <button type="button" data-color="#f59e0b" onclick="selectAccentColor('#f59e0b', this)"
+                      class="w-11 h-11 rounded-xl bg-amber-500 ring-2 ring-white scale-105 transition-transform" aria-label="Neon Gold"></button>
+              <button type="button" data-color="#06b6d4" onclick="selectAccentColor('#06b6d4', this)"
+                      class="w-11 h-11 rounded-xl bg-cyan-500 opacity-80 hover:opacity-100 transition-transform" aria-label="Electric Cyan"></button>
+              <button type="button" data-color="#f43f5e" onclick="selectAccentColor('#f43f5e', this)"
+                      class="w-11 h-11 rounded-xl bg-rose-500 opacity-80 hover:opacity-100 transition-transform" aria-label="Crimson Red"></button>
+              <button type="button" data-color="#10b981" onclick="selectAccentColor('#10b981', this)"
+                      class="w-11 h-11 rounded-xl bg-emerald-500 opacity-80 hover:opacity-100 transition-transform" aria-label="Matrix Green"></button>
+              <button type="button" data-color="#a855f7" onclick="selectAccentColor('#a855f7', this)"
+                      class="w-11 h-11 rounded-xl bg-purple-500 opacity-80 hover:opacity-100 transition-transform" aria-label="Hyper Violet"></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: REAL-TIME CANVAS CARD & EXPORT -->
+        <div class="lg:col-span-6 bg-surface border border-borderDark rounded-2xl p-4 sm:p-5 space-y-4 shadow-xl">
+          <div class="flex items-center justify-between pb-3 border-b border-borderDark">
+            <h2 class="text-sm sm:text-base font-extrabold text-white">🖼️ Real-Time Card Preview</h2>
+            <span class="px-2.5 py-1 rounded-lg bg-cyan-500/15 border border-cyan-500/40 text-cyan-300 text-xs font-bold">
+              1080 × 1080 HD PNG
+            </span>
+          </div>
+
+          <div class="p-2 rounded-xl bg-void border border-borderDark">
+            <canvas id="lft-canvas" class="w-full h-auto rounded-lg block"></canvas>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <button type="button" onclick="downloadLftPNG()"
+                    class="p-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg min-h-[46px]">
+              <span>⬇️ Download Card PNG</span>
+            </button>
+            <button type="button" onclick="copyLftCaption()"
+                    class="p-3 rounded-xl bg-cyan-500/15 border border-cyan-500/40 text-cyan-300 hover:bg-cyan-500/25 font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 min-h-[46px]">
+              <span>📋 Copy LFT / Roster Post</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================================================
+         TAB 3: KIE HUB & RANKINGS (TOURNAMENTS, TEAMS, PLAYERS & QUICK EDIT)
+         ======================================================================== -->
+    <section id="panel-kie" class="hidden space-y-5">
+
+      <!-- TOP BANNER & QUICK EDITOR TOGGLE -->
+      <div class="bg-gradient-to-br from-surface via-surfaceLight to-void border border-borderDark rounded-2xl p-4 sm:p-5 shadow-xl">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-borderDark">
+          <div>
+            <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/40 text-amber-300 text-[11px] font-extrabold mb-1.5">
+              KRAFTON INDIA ESPORTS (KIE) DIRECTORY
+            </div>
+            <h2 class="text-lg sm:text-xl font-black text-white">
+              Tournaments, Team Standings &amp; Player Tracker
+            </h2>
+            <p class="text-xs text-slate-400 mt-0.5">
+              Searchable circuit hub + editable rankings &amp; schedules saved right in your browser on mobile.
+            </p>
+          </div>
+
+          <div class="flex flex-wrap gap-2">
+            <button type="button" onclick="toggleKieEditor()"
+                    class="px-3.5 py-2 rounded-xl bg-amber-500 text-slate-950 font-extrabold text-xs hover:bg-amber-400 min-h-[40px]">
+              ✏️ Quick Edit / JSON
+            </button>
+            <button type="button" onclick="resetKieData()"
+                    class="px-3.5 py-2 rounded-xl bg-void border border-borderDark text-slate-300 font-bold text-xs hover:text-white min-h-[40px]">
+              Reset KIE Defaults
+            </button>
+          </div>
+        </div>
+
+        <!-- POINT & DECAY RULES SUMMARY -->
+        <div class="mt-3.5 grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+          <div class="p-3 rounded-xl bg-void/90 border border-borderDark">
+            <div class="font-extrabold text-amber-400 mb-1">📊 KIE Ranking Point Rules</div>
+            <p class="text-slate-300 leading-relaxed">
+              Points are awarded across official KRAFTON India events (such as <strong>BGIS</strong>, <strong>BMPS</strong>, and <strong>BMSD</strong>) based on final standings, match placements, finishes, and special awards.
+            </p>
+          </div>
+          <div class="p-3 rounded-xl bg-void/90 border border-borderDark">
+            <div class="font-extrabold text-cyan-400 mb-1">⏳ Time-Decay Weighting</div>
+            <p class="text-slate-300 leading-relaxed">
+              Recent tournaments carry higher weight than older ones as points step down over subsequent months—keeping the leaderboard focused on current form.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- MOBILE QUICK-EDIT FORM & RAW JSON PANEL -->
+      <div id="kie-editor-panel" class="hidden bg-surface border-2 border-amber-500/50 rounded-2xl p-4 sm:p-5 space-y-4 shadow-2xl">
+        <div class="flex items-center justify-between pb-2.5 border-b border-borderDark">
+          <h3 class="text-sm sm:text-base font-extrabold text-amber-400">
+            ✏️ Mobile Quick-Edit &amp; JSON Data Studio
+          </h3>
+          <button type="button" onclick="toggleKieEditor()"
+                  class="px-2.5 py-1 rounded-lg bg-void border border-borderDark text-xs font-bold text-slate-300">
+            Hide Editor
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <!-- Quick Add / Update Team Ranking Form -->
+          <form onsubmit="handleQuickTeamUpdate(event)" class="p-3.5 rounded-xl bg-void border border-borderDark space-y-3">
+            <div class="text-xs font-extrabold uppercase tracking-wider text-cyan-400">
+              1. Add or Update KIE Team Points
+            </div>
+            <div class="grid grid-cols-2 gap-2.5">
+              <div>
+                <label for="kie-edit-team" class="block text-[11px] font-bold text-slate-400 mb-1">Team Name</label>
+                <input id="kie-edit-team" type="text" placeholder="e.g. Team SouL" required
+                       class="w-full px-3 py-2 rounded-lg bg-surface border border-borderDark text-sm text-white min-h-[42px]" />
+              </div>
+              <div>
+                <label for="kie-edit-pts" class="block text-[11px] font-bold text-slate-400 mb-1">Total Points</label>
+                <input id="kie-edit-pts" type="number" min="0" max="99999" placeholder="2250" required
+                       class="w-full px-3 py-2 rounded-lg bg-surface border border-borderDark text-sm text-white font-bold min-h-[42px]" />
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-2.5">
+              <div>
+                <label for="kie-edit-tag" class="block text-[11px] font-bold text-slate-400 mb-1">Tag / Note</label>
+                <input id="kie-edit-tag" type="text" placeholder="Post-BMIC 2026 Leader"
+                       class="w-full px-3 py-2 rounded-lg bg-surface border border-borderDark text-sm text-white min-h-[42px]" />
+              </div>
+              <div>
+                <label for="kie-edit-delta" class="block text-[11px] font-bold text-slate-400 mb-1">Recent Form</label>
+                <input id="kie-edit-delta" type="text" placeholder="BMIC / BMSD Active"
+                       class="w-full px-3 py-2 rounded-lg bg-surface border border-borderDark text-sm text-white min-h-[42px]" />
+              </div>
+            </div>
+            <button type="submit"
+                    class="w-full p-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-extrabold text-xs min-h-[42px]">
+              Save &amp; Re-Rank Teams
+            </button>
+          </form>
+
+          <!-- Quick Add Tournament Form -->
+          <form onsubmit="handleQuickTourneyAdd(event)" class="p-3.5 rounded-xl bg-void border border-borderDark space-y-3">
+            <div class="text-xs font-extrabold uppercase tracking-wider text-amber-400">
+              2. Add Official or 3rd-Party Tournament
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <div>
+                <label for="kie-t-name" class="block text-[11px] font-bold text-slate-400 mb-1">Event Name</label>
+                <input id="kie-t-name" type="text" placeholder="e.g. BGMI Winter Cup" required
+                       class="w-full px-3 py-2 rounded-lg bg-surface border border-borderDark text-sm text-white min-h-[42px]" />
+              </div>
+              <div>
+                <label for="kie-t-cat" class="block text-[11px] font-bold text-slate-400 mb-1">Category</label>
+                <select id="kie-t-cat"
+                        class="w-full px-3 py-2 rounded-lg bg-surface border border-borderDark text-sm text-white font-semibold min-h-[42px]">
+                  <option value="Official">Official KIE / BGMI</option>
+                  <option value="3rd-Party">3rd-Party Event</option>
+                </select>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-2.5">
+              <div>
+                <label for="kie-t-dates" class="block text-[11px] font-bold text-slate-400 mb-1">Dates</label>
+                <input id="kie-t-dates" type="text" placeholder="Dec 2026" required
+                       class="w-full px-3 py-2 rounded-lg bg-surface border border-borderDark text-sm text-white min-h-[42px]" />
+              </div>
+              <div>
+                <label for="kie-t-tier" class="block text-[11px] font-bold text-slate-400 mb-1">Tier / Scale</label>
+                <input id="kie-t-tier" type="text" placeholder="Tier 1 / Open" required
+                       class="w-full px-3 py-2 rounded-lg bg-surface border border-borderDark text-sm text-white min-h-[42px]" />
+              </div>
+            </div>
+            <button type="submit"
+                    class="w-full p-2.5 rounded-xl bg-cyan-500/20 border border-cyan-400/50 text-cyan-200 font-extrabold text-xs min-h-[42px]">
+              + Add Tournament to Hub
+            </button>
+          </form>
+        </div>
+
+        <!-- Full JSON Editor -->
+        <div class="p-3.5 rounded-xl bg-void border border-borderDark space-y-2">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <label for="kie-json-area" class="text-xs font-extrabold uppercase tracking-wider text-purple-300">
+              3. Full KIE Dataset JSON (Advanced Edit / Backup)
+            </label>
+            <div class="flex gap-2">
+              <button type="button" onclick="syncJsonTextareaFromState()"
+                      class="px-2.5 py-1 rounded-lg bg-surface border border-borderDark text-[11px] font-bold text-slate-300">
+                Refresh JSON
+              </button>
+              <button type="button" onclick="applyJsonFromTextarea()"
+                      class="px-3 py-1 rounded-lg bg-emerald-500/20 border border-emerald-400/50 text-emerald-300 text-[11px] font-extrabold">
+                Apply JSON
+              </button>
+            </div>
+          </div>
+          <textarea id="kie-json-area" rows="7"
+                    class="w-full p-3 rounded-xl bg-surface border border-borderDark font-mono text-xs text-slate-200 focus:outline-none focus:border-purple-400"></textarea>
+        </div>
+      </div>
+
+      <!-- SEARCH & FILTER BAR FOR KIE HUB -->
+      <div class="bg-surface border border-borderDark rounded-2xl p-3.5 sm:p-4 flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
+        <div class="flex-1 relative">
+          <input id="kie-search-input" type="text" oninput="renderKieHub()"
+                 placeholder="Search tournaments, teams (Team SouL, GodLike...), or players (Jonathan)..."
+                 class="w-full px-3.5 py-2.5 rounded-xl bg-void border border-borderDark text-sm text-white focus:outline-none focus:border-amber-400 min-h-[44px]" />
+        </div>
+        <div class="flex flex-wrap gap-1.5">
+          <button type="button" data-filter="all" onclick="setKieFilter('all', this)"
+                  class="kie-filter-btn px-3 py-2 rounded-xl text-xs font-extrabold bg-amber-500 text-slate-950 min-h-[40px]">
+            All
+          </button>
+          <button type="button" data-filter="Official" onclick="setKieFilter('Official', this)"
+                  class="kie-filter-btn px-3 py-2 rounded-xl text-xs font-bold bg-void border border-borderDark text-slate-300 hover:text-white min-h-[40px]">
+            Official
+          </button>
+          <button type="button" data-filter="3rd-Party" onclick="setKieFilter('3rd-Party', this)"
+                  class="kie-filter-btn px-3 py-2 rounded-xl text-xs font-bold bg-void border border-borderDark text-slate-300 hover:text-white min-h-[40px]">
+            3rd-Party
+          </button>
+          <button type="button" data-filter="Rankings" onclick="setKieFilter('Rankings', this)"
+                  class="kie-filter-btn px-3 py-2 rounded-xl text-xs font-bold bg-void border border-borderDark text-slate-300 hover:text-white min-h-[40px]">
+            Rankings
+          </button>
+        </div>
+      </div>
+
+      <!-- KIE MAIN GRID: TOURNAMENTS + TEAM STANDINGS & PLAYER TRACKER -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+
+        <!-- TOURNAMENTS SECTION -->
+        <div id="kie-tournaments-col" class="lg:col-span-6 bg-surface border border-borderDark rounded-2xl p-4 sm:p-5 space-y-4 shadow-xl">
+          <div class="flex items-center justify-between pb-3 border-b border-borderDark">
+            <h3 class="text-sm sm:text-base font-extrabold text-white">🗓️ Tournaments &amp; Circuit Events</h3>
+            <span id="kie-tourney-count" class="text-xs font-bold text-cyan-400">0 Events</span>
+          </div>
+          <div id="kie-tournaments-list" class="space-y-2.5 max-h-[680px] overflow-y-auto pr-1"></div>
+        </div>
+
+        <!-- RIGHT: POST-BMIC 2026 TEAM LEADERBOARD + JONATHAN PLAYER TRACKER -->
+        <div id="kie-rankings-col" class="lg:col-span-6 space-y-5">
+
+          <!-- TEAM RANKINGS CARD -->
+          <div class="bg-surface border border-borderDark rounded-2xl p-4 sm:p-5 space-y-3.5 shadow-xl">
+            <div class="flex items-center justify-between pb-3 border-b border-borderDark">
+              <div>
+                <h3 class="text-sm sm:text-base font-extrabold text-white">🏆 KIE Team Standings</h3>
+                <p class="text-[11px] text-slate-400">Post-BMIC 2026 Points Leaderboard (Auto-sorted)</p>
+              </div>
+              <span class="px-2.5 py-1 rounded-lg bg-amber-500/15 border border-amber-500/40 text-amber-300 text-xs font-extrabold">
+                Top 10
+              </span>
+            </div>
+
+            <div class="overflow-x-auto rounded-xl border border-borderDark">
+              <table class="w-full text-left border-collapse text-xs sm:text-sm">
+                <thead>
+                  <tr class="bg-surfaceLight text-slate-400 text-[11px] font-extrabold uppercase tracking-wider">
+                    <th class="py-2.5 px-2.5">#</th>
+                    <th class="py-2.5 px-2.5">Team</th>
+                    <th class="py-2.5 px-2 hidden sm:table-cell">Note</th>
+                    <th class="py-2.5 px-2.5 text-right text-amber-400">Points</th>
+                  </tr>
+                </thead>
+                <tbody id="kie-teams-tbody" class="divide-y divide-borderDark"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- PLAYER PROFILE TRACKER CARD -->
+          <div class="bg-surface border border-borderDark rounded-2xl p-4 sm:p-5 space-y-3.5 shadow-xl">
+            <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-borderDark">
+              <div>
+                <h3 class="text-sm sm:text-base font-extrabold text-white">🎯 KIE Player Profile Tracker</h3>
+                <p class="text-[11px] text-slate-400">Event-by-event performance log &amp; custom player editor</p>
+              </div>
+              <span id="kie-player-badge"
+                    class="px-2.5 py-1 rounded-lg bg-cyan-500/15 border border-cyan-500/40 text-cyan-300 text-xs font-extrabold">
+                Jonathan (Jonathan16)
+              </span>
+            </div>
+
+            <!-- Add / Edit Player Event Row -->
+            <form onsubmit="handleAddPlayerEvent(event)" class="grid grid-cols-1 sm:grid-cols-4 gap-2 p-3 rounded-xl bg-void border border-borderDark">
+              <input id="p-evt-name" type="text" placeholder="Event (e.g. BMIC 2026)" required
+                     class="sm:col-span-2 px-3 py-2 rounded-lg bg-surface border border-borderDark text-xs text-white min-h-[38px]" />
+              <input id="p-evt-pos" type="text" placeholder="Pos (e.g. #2)" required
+                     class="px-3 py-2 rounded-lg bg-surface border border-borderDark text-xs text-white min-h-[38px]" />
+              <div class="flex gap-1.5">
+                <input id="p-evt-pts" type="number" min="0" placeholder="Pts" required
+                       class="w-full px-2.5 py-2 rounded-lg bg-surface border border-borderDark text-xs text-white font-bold min-h-[38px]" />
+                <button type="submit"
+                        class="px-3 py-2 rounded-lg bg-cyan-500 text-slate-950 font-extrabold text-xs shrink-0 min-h-[38px]">
+                  +
+                </button>
+              </div>
+            </form>
+
+            <div id="kie-player-events" class="space-y-2"></div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="border-t border-borderDark py-5 px-4 text-center text-xs text-slate-500">
+    Indian Esports Studio &amp; KIE Hub • Free Scrims Table, LFT Card Generator &amp; Editable Rankings
+  </footer>
+
+  <script>
+    /* ==========================================================================
+       1. STORAGE KEYS & DEFAULT STATES
+       ========================================================================== */
+    const STORAGE_KEY_SCRIMS = 'in_esports_scrims_v2';
+    const STORAGE_KEY_LFT = 'in_esports_lft_v2';
+    const STORAGE_KEY_KIE = 'in_esports_kie_v2';
+
+    const PLACEMENT_POINTS = {
+      1: 10, 2: 6, 3: 5, 4: 4, 5: 3, 6: 2, 7: 1, 8: 1
+    };
+
+    function getPlacementPts(rank) {
+      return PLACEMENT_POINTS[rank] || 0;
+    }
+
+    function createDefaultScrimsState() {
+      return {
+        tourneyTitle: 'MUMBAI NIGHT SCRIMS S5',
+        lobbySubtitle: 'GROUP A • T1 CUSTOMS',
+        activeMatchIndex: 0,
+        matches: [
+          {
+            name: 'Match 1',
+            entries: [
+              { team: 'Team SouL', rank: 1, kills: 11 },
+              { team: 'GodLike Esports', rank: 2, kills: 9 },
+              { team: 'Team Outrage', rank: 3, kills: 7 },
+              { team: 'Gladiators Esports', rank: 4, kills: 5 },
+              { team: 'Elite Nova Esports', rank: 5, kills: 6 },
+              { team: 'Orangutan', rank: 6, kills: 4 },
+              { team: 'Genesis Esports', rank: 7, kills: 3 },
+              { team: 'Team 8Bit', rank: 8, kills: 2 }
+            ]
+          }
+        ]
+      };
+    }
+
+    function createDefaultLftState() {
+      return {
+        cardMode: 'player',
+        accentColor: '#f59e0b',
+        game: 'BGMI',
+        name: 'REAPERxIGL',
+        role: 'IGL (In-Game Leader)',
+        device: 'iQOO 12 • 120 FPS',
+        stats: 'Conqueror • 5.8 K/D',
+        exp: 'T1/T2 Scrims • BGIS R3',
+        rosterP1: 'REAPERxIGL',
+        rosterP2: 'BLAZEop',
+        rosterP3: 'VIPERx7',
+        rosterP4: 'ZENITH',
+        rosterSub: 'SUB: KRYPTON (OR LFP 5TH)',
+        avail: 'Daily 7 PM – 1 AM IST',
+        contact: '@reaper_bgmi'
+      };
+    }
+
+    function createDefaultKieState() {
+      return {
+        tournaments: [
+          {
+            name: 'JioBLAST Gully Wars',
+            category: 'Official',
+            dates: '20 Sep – 29 Nov 2026',
+            scale: '1,024 Teams • Open Circuit',
+            status: 'Active / Ongoing'
+          },
+          {
+            name: 'Google Play Arena',
+            category: '3rd-Party',
+            dates: '30 Oct – 19 Dec 2026',
+            scale: 'Tier 1 Invitational',
+            status: 'Active / Ongoing'
+          },
+          {
+            name: 'Chennai Esports Global Championship',
+            category: '3rd-Party',
+            dates: '3 Nov – 13 Dec 2026',
+            scale: 'Tier 1 Global Showcase',
+            status: 'Active / Ongoing'
+          },
+          {
+            name: 'RedBull Solo Legends Season 2',
+            category: '3rd-Party',
+            dates: '23 Nov – 3 Dec 2026',
+            scale: 'Tier 3 Solo Format',
+            status: 'Active / Ongoing'
+          },
+          {
+            name: 'PAN Fest at NODWIN Gaming Arena',
+            category: '3rd-Party',
+            dates: '7 Dec – 13 Dec 2026',
+            scale: 'Tier 2 LAN / Arena',
+            status: 'Upcoming'
+          },
+          {
+            name: 'BMIC 2026',
+            category: 'Official',
+            dates: '30 Oct – 1 Nov 2026',
+            scale: 'Official BGMI Championship',
+            status: 'Completed'
+          },
+          {
+            name: 'BMSD 2026',
+            category: 'Official',
+            dates: '22 Sep – 18 Oct 2026',
+            scale: 'Official BGMI Series',
+            status: 'Completed'
+          },
+          {
+            name: 'TRIDENT IGNITE 2026 : BGMI',
+            category: 'Official',
+            dates: '13 Jul – 14 Sep 2026',
+            scale: 'Official BGMI Circuit',
+            status: 'Completed'
+          },
+          {
+            name: 'NAYE KHILADI',
+            category: 'Official',
+            dates: '15 Jun – 26 Jul 2026',
+            scale: 'Grassroots / Emerging Talent',
+            status: 'Completed'
+          },
+          {
+            name: 'Rising Star Invitational 2026',
+            category: 'Official',
+            dates: '3 Jul – 5 Jul 2026',
+            scale: 'Official Invitational',
+            status: 'Completed'
+          },
+          {
+            name: 'BMPS 2026',
+            category: 'Official',
+            dates: '8 Jun – 21 Jun 2026',
+            scale: 'Battlegrounds Mobile India Pro Series',
+            status: 'Completed'
+          },
+          {
+            name: 'KIE CCT 2026',
+            category: 'Official',
+            dates: '13 Apr – 26 Apr 2026',
+            scale: 'KRAFTON India Esports Circuit',
+            status: 'Completed'
+          },
+          {
+            name: 'UE IRS 2026',
+            category: 'Official',
+            dates: '14 Mar – 26 Apr 2026',
+            scale: 'Official BGMI Circuit Event',
+            status: 'Completed'
+          },
+          {
+            name: 'BGIS 2026',
+            category: 'Official',
+            dates: '15 Dec 2025 – 29 Mar 2026',
+            scale: 'Battlegrounds Mobile India Series',
+            status: 'Completed'
+          }
+        ],
+        teams: [
+          { team: 'Team SouL', points: 2250, note: 'Post-BMIC 2026 #1', form: 'Leaderboard Leader' },
+          { team: 'GodLike Esports', points: 1895, note: 'Post-BMIC 2026 #2', form: 'Top Contender' },
+          { team: 'Team Outrage', points: 1640, note: 'Post-BMIC 2026 #3', form: 'Top 3 Standings' },
+          { team: 'Gladiators Esports', points: 1520, note: 'Post-BMIC 2026 #4', form: 'Top 5 Standings' },
+          { team: 'Elite Nova Esports', points: 1480, note: 'Post-BMIC 2026 #5', form: 'Top 5 Standings' },
+          { team: 'Orangutan', points: 1365, note: 'Post-BMIC 2026 #6', form: 'Consistent Roster' },
+          { team: 'Genesis Esports', points: 1290, note: 'Post-BMIC 2026 #7', form: 'Circuit Contender' },
+          { team: 'Team 8Bit', points: 1180, note: 'Post-BMIC 2026 #8 (Tied)', form: 'Tied #8' },
+          { team: 'Team Apex Gaming', points: 1180, note: 'Post-BMIC 2026 #8 (Tied)', form: 'Tied #8' },
+          { team: 'Revenant Xspark', points: 1140, note: 'Post-BMIC 2026 #10', form: 'Top 10 Standings' }
+        ],
+        playerProfile: {
+          name: 'Jonathan',
+          ign: 'Jonathan16',
+          events: [
+            { event: 'BMPS 2026', position: 'Logged', points: 0 },
+            { event: 'BGIS 2026', position: 'Logged', points: 0 },
+            { event: 'BMSD 2025', position: 'Logged', points: 0 },
+            { event: 'BGIS 2025', position: 'Logged', points: 0 },
+            { event: 'BMPS 2024', position: 'Logged', points: 0 }
+          ]
+        }
+      };
+    }
+
+    let scrimsState = loadFromStorage(STORAGE_KEY_SCRIMS, createDefaultScrimsState());
+    let lftState = loadFromStorage(STORAGE_KEY_LFT, createDefaultLftState());
+    let kieState = loadFromStorage(STORAGE_KEY_KIE, createDefaultKieState());
+    let kieFilter = 'all';
+
+    function loadFromStorage(key, fallback) {
+      try {
+        const raw = localStorage.getItem(key);
+        if (!raw) return fallback;
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(fallback)) return Array.isArray(parsed) ? parsed : fallback;
+        return Object.assign({}, fallback, parsed);
+      } catch (err) {
+        return fallback;
+      }
+    }
+
+    function saveToStorage(key, value) {
+      try {
+        localStorage.setItem(key, JSON.stringify(value));
+      } catch (err) {
+        // Ignore storage restrictions
+      }
+    }
+
+    /* ==========================================================================
+       2. TAB NAVIGATION & TOAST
+       ========================================================================== */
+    function switchMainTab(tab) {
+      const tabScrims = document.getElementById('tab-scrims');
+      const tabLft = document.getElementById('tab-lft');
+      const tabKie = document.getElementById('tab-kie');
+
+      const panelScrims = document.getElementById('panel-scrims');
+      const panelLft = document.getElementById('panel-lft');
+      const panelKie = document.getElementById('panel-kie');
+
+      const inactiveStyle = 'p-2.5 sm:p-3 rounded-xl font-extrabold text-[11px] sm:text-sm transition-all flex items-center justify-center gap-1.5 text-slate-400 hover:text-white min-h-[44px]';
+
+      tabScrims.className = inactiveStyle;
+      tabLft.className = inactiveStyle;
+      tabKie.className = inactiveStyle;
+
+      panelScrims.classList.add('hidden');
+      panelLft.classList.add('hidden');
+      panelKie.classList.add('hidden');
+
+      if (tab === 'scrims') {
+        tabScrims.className = 'p-2.5 sm:p-3 rounded-xl font-extrabold text-[11px] sm:text-sm transition-all flex items-center justify-center gap-1.5 bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 neon-glow-gold min-h-[44px]';
+        panelScrims.classList.remove('hidden');
+        renderStandingsCanvas();
+      } else if (tab === 'lft') {
+        tabLft.className = 'p-2.5 sm:p-3 rounded-xl font-extrabold text-[11px] sm:text-sm transition-all flex items-center justify-center gap-1.5 bg-gradient-to-r from-cyan-400 to-blue-500 text-slate-950 neon-glow-cyan min-h-[44px]';
+        panelLft.classList.remove('hidden');
+        renderLftCanvas();
+      } else {
+        tabKie.className = 'p-2.5 sm:p-3 rounded-xl font-extrabold text-[11px] sm:text-sm transition-all flex items-center justify-center gap-1.5 bg-gradient-to-r from-purple-500 to-amber-500 text-slate-950 neon-glow-purple min-h-[44px]';
+        panelKie.classList.remove('hidden');
+        renderKieHub();
+      }
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.remove('opacity-0', 'translate-y-6');
+      toast.classList.add('opacity-100', 'translate-y-0');
+      clearTimeout(window._toastTimeout);
+      window._toastTimeout = setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-6');
+        toast.classList.remove('opacity-100', 'translate-y-0');
+      }, 2500);
+    }
+
+    /* ==========================================================================
+       3. SCRIMS POINTS TABLE ENGINE
+       ========================================================================== */
+    function hydrateScrimsInputs() {
+      document.getElementById('tourney-title').value = scrimsState.tourneyTitle;
+      document.getElementById('lobby-subtitle').value = scrimsState.lobbySubtitle;
+    }
+
+    function handleScrimsMetaChange() {
+      scrimsState.tourneyTitle = document.getElementById('tourney-title').value;
+      scrimsState.lobbySubtitle = document.getElementById('lobby-subtitle').value;
+      saveToStorage(STORAGE_KEY_SCRIMS, scrimsState);
+      renderStandingsCanvas();
+    }
+
+    function renderMatchBar() {
+      const bar = document.getElementById('match-bar');
+      bar.innerHTML = '';
+
+      if (scrimsState.activeMatchIndex >= scrimsState.matches.length) {
+        scrimsState.activeMatchIndex = Math.max(0, scrimsState.matches.length - 1);
+      }
+
+      scrimsState.matches.forEach((m, idx) => {
+        const isActive = idx === scrimsState.activeMatchIndex;
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = isActive
+          ? 'px-3.5 py-2 rounded-xl text-xs font-extrabold bg-amber-500/20 border border-amber-400 text-amber-300 min-h-[38px]'
+          : 'px-3.5 py-2 rounded-xl text-xs font-bold bg-void border border-borderDark text-slate-400 hover:text-white min-h-[38px]';
+        btn.textContent = `${m.name} (${m.entries.length})`;
+        btn.onclick = () => {
+          scrimsState.activeMatchIndex = idx;
+          saveToStorage(STORAGE_KEY_SCRIMS, scrimsState);
+          renderAllScrims();
+        };
+        bar.appendChild(btn);
+      });
+
+      const addBtn = document.createElement('button');
+      addBtn.type = 'button';
+      addBtn.className = 'px-3.5 py-2 rounded-xl text-xs font-extrabold border border-dashed border-cyan-500/50 text-cyan-300 hover:bg-cyan-500/10 min-h-[38px]';
+      addBtn.textContent = '+ Add Match';
+      addBtn.onclick = () => {
+        const nextNum = scrimsState.matches.length + 1;
+        scrimsState.matches.push({ name: `Match ${nextNum}`, entries: [] });
+        scrimsState.activeMatchIndex = scrimsState.matches.length - 1;
+        saveToStorage(STORAGE_KEY_SCRIMS, scrimsState);
+        renderAllScrims();
+        showToast(`Added Match ${nextNum}`);
+      };
+      bar.appendChild(addBtn);
+
+      const currentMatch = scrimsState.matches[scrimsState.activeMatchIndex];
+      document.getElementById('active-match-label').textContent = currentMatch.name;
+      document.getElementById('active-match-list-label').textContent = currentMatch.name;
+      document.getElementById('active-match-count').textContent = `${currentMatch.entries.length} Teams`;
+      document.getElementById('total-matches-badge').textContent =
+        `${scrimsState.matches.length} ${scrimsState.matches.length === 1 ? 'Match' : 'Matches'}`;
+
+      const delBtn = document.getElementById('delete-match-btn');
+      delBtn.classList.toggle('hidden', scrimsState.matches.length <= 1);
+    }
+
+    function deleteCurrentMatch() {
+      if (scrimsState.matches.length <= 1) return;
+      scrimsState.matches.splice(scrimsState.activeMatchIndex, 1);
+      scrimsState.matches.forEach((m, i) => {
+        m.name = `Match ${i + 1}`;
+      });
+      scrimsState.activeMatchIndex = Math.max(0, scrimsState.activeMatchIndex - 1);
+      saveToStorage(STORAGE_KEY_SCRIMS, scrimsState);
+      renderAllScrims();
+      showToast('Match deleted');
+    }
+
+    function handleAddMatchEntry(event) {
+      event.preventDefault();
+      const teamInput = document.getElementById('entry-team');
+      const rankInput = document.getElementById('entry-rank');
+      const killsInput = document.getElementById('entry-kills');
+
+      const team = teamInput.value.trim();
+      const rank = Math.max(1, Math.min(25, parseInt(rankInput.value, 10) || 16));
+      const kills = Math.max(0, parseInt(killsInput.value, 10) || 0);
+
+      if (!team) return;
+
+      const currentMatch = scrimsState.matches[scrimsState.activeMatchIndex];
+      const existingIdx = currentMatch.entries.findIndex(
+        (e) => e.team.toLowerCase() === team.toLowerCase()
+      );
+
+      if (existingIdx >= 0) {
+        currentMatch.entries[existingIdx] = { team, rank, kills };
+        showToast(`Updated ${team} in ${currentMatch.name}`);
+      } else {
+        currentMatch.entries.push({ team, rank, kills });
+        showToast(`Added ${team} (#${rank}, ${kills} finishes)`);
+      }
+
+      teamInput.value = '';
+      rankInput.value = Math.min(25, rank + 1);
+      killsInput.value = 0;
+
+      saveToStorage(STORAGE_KEY_SCRIMS, scrimsState);
+      renderAllScrims();
+    }
+
+    function removeMatchEntry(entryIndex) {
+      const currentMatch = scrimsState.matches[scrimsState.activeMatchIndex];
+      currentMatch.entries.splice(entryIndex, 1);
+      saveToStorage(STORAGE_KEY_SCRIMS, scrimsState);
+      renderAllScrims();
+    }
+
+    function loadScrimsDemo() {
+      scrimsState = createDefaultScrimsState();
+      hydrateScrimsInputs();
+      saveToStorage(STORAGE_KEY_SCRIMS, scrimsState);
+      renderAllScrims();
+      showToast('Sample Scrims data loaded');
+    }
+
+    function clearAllScrims() {
+      scrimsState = {
+        tourneyTitle: document.getElementById('tourney-title').value || 'CUSTOM SCRIMS',
+        lobbySubtitle: document.getElementById('lobby-subtitle').value || 'OVERALL STANDINGS',
+        activeMatchIndex: 0,
+        matches: [{ name: 'Match 1', entries: [] }]
+      };
+      saveToStorage(STORAGE_KEY_SCRIMS, scrimsState);
+      renderAllScrims();
+      showToast('All match entries cleared');
+    }
+
+    function renderMatchEntriesList() {
+      const list = document.getElementById('match-entries-list');
+      const entries = scrimsState.matches[scrimsState.activeMatchIndex].entries;
+      const sorted = [...entries].sort((a, b) => a.rank - b.rank);
+
+      if (sorted.length === 0) {
+        list.innerHTML = '<div class="p-3 rounded-xl bg-void border border-borderDark text-xs text-slate-400 text-center">No teams added in this match yet.</div>';
+        return;
+      }
+
+      list.innerHTML = '';
+      sorted.forEach((item) => {
+        const originalIdx = entries.indexOf(item);
+        const placePts = getPlacementPts(item.rank);
+        const total = placePts + item.kills;
+
+        const row = document.createElement('div');
+        row.className = 'flex items-center justify-between gap-2 p-2.5 rounded-xl bg-void border border-borderDark';
+        row.innerHTML = `
+          <div class="min-w-0">
+            <div class="text-xs sm:text-sm font-bold text-white truncate">
+              <span class="text-amber-400">#${item.rank}</span> ${escapeHtml(item.team)}
+            </div>
+            <div class="text-[11px] text-slate-400">
+              Place: ${placePts} pts • Finishes: ${item.kills} pts • <strong class="text-cyan-300">Total: ${total}</strong>
+            </div>
+          </div>
+          <button type="button" onclick="removeMatchEntry(${originalIdx})"
+                  class="px-2.5 py-1.5 rounded-lg bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs font-bold shrink-0">
+            Remove
+          </button>
+        `;
+        list.appendChild(row);
+      });
+    }
+
+    function computeOverallStandings() {
+      const teamsMap = new Map();
+
+      scrimsState.matches.forEach((match) => {
+        match.entries.forEach((entry) => {
+          const key = entry.team.trim().toLowerCase();
+          if (!teamsMap.has(key)) {
+            teamsMap.set(key, {
+              team: entry.team.trim(),
+              wwcd: 0,
+              placePts: 0,
+              killPts: 0,
+              totalPts: 0
+            });
+          }
+          const rec = teamsMap.get(key);
+          const pPts = getPlacementPts(entry.rank);
+          if (entry.rank === 1) rec.wwcd += 1;
+          rec.placePts += pPts;
+          rec.killPts += entry.kills;
+          rec.totalPts += pPts + entry.kills;
+        });
+      });
+
+      return Array.from(teamsMap.values()).sort((a, b) => {
+        if (b.totalPts !== a.totalPts) return b.totalPts - a.totalPts;
+        if (b.wwcd !== a.wwcd) return b.wwcd - a.wwcd;
+        if (b.placePts !== a.placePts) return b.placePts - a.placePts;
+        if (b.killPts !== a.killPts) return b.killPts - a.killPts;
+        return a.team.localeCompare(b.team);
+      });
+    }
+
+    function renderStandingsTable() {
+      const standings = computeOverallStandings();
+      const tbody = document.getElementById('standings-tbody');
+      tbody.innerHTML = '';
+
+      if (standings.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="py-6 px-3 text-center text-xs text-slate-400">Add team results to see auto-calculated standings</td></tr>';
+        return;
+      }
+
+      standings.forEach((row, idx) => {
+        const rank = idx + 1;
+        let rowBg = '';
+        let badgeStyle = 'bg-surfaceLight text-slate-200';
+
+        if (rank === 1) {
+          rowBg = 'bg-amber-500/10';
+          badgeStyle = 'bg-amber-400 text-slate-950';
+        } else if (rank === 2) {
+          rowBg = 'bg-slate-400/10';
+          badgeStyle = 'bg-slate-200 text-slate-950';
+        } else if (rank === 3) {
+          rowBg = 'bg-orange-500/10';
+          badgeStyle = 'bg-orange-500 text-white';
+        }
+
+        const tr = document.createElement('tr');
+        tr.className = rowBg;
+        tr.innerHTML = `
+          <td class="py-2.5 px-2.5">
+            <span class="inline-flex items-center justify-center w-6 h-6 rounded-md text-xs font-black ${badgeStyle}">${rank}</span>
+          </td>
+          <td class="py-2.5 px-2.5 font-bold text-white whitespace-nowrap">${escapeHtml(row.team)}</td>
+          <td class="py-2.5 px-2 text-center font-semibold text-slate-300">${row.wwcd > 0 ? '🍗 ' + row.wwcd : '0'}</td>
+          <td class="py-2.5 px-2 text-center font-semibold text-slate-300">${row.placePts}</td>
+          <td class="py-2.5 px-2 text-center font-semibold text-cyan-300">${row.killPts}</td>
+          <td class="py-2.5 px-2.5 text-right font-black text-amber-400 text-sm">${row.totalPts}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderStandingsCanvas() {
+      const canvas = document.getElementById('standings-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+
+      const standings = computeOverallStandings().slice(0, 16);
+      const rowCount = Math.max(4, standings.length);
+      const width = 1080;
+      const height = 340 + rowCount * 58;
+
+      canvas.width = width;
+      canvas.height = height;
+
+      const grad = ctx.createLinearGradient(0, 0, width, height);
+      grad.addColorStop(0, '#070a13');
+      grad.addColorStop(1, '#11182c');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, width, height);
+
+      const barGrad = ctx.createLinearGradient(0, 0, width, 0);
+      barGrad.addColorStop(0, '#f59e0b');
+      barGrad.addColorStop(1, '#06b6d4');
+      ctx.fillStyle = barGrad;
+      ctx.fillRect(0, 0, width, 12);
+
+      const title = (scrimsState.tourneyTitle || 'ESPORTS SCRIMS').toUpperCase();
+      const subtitle = (scrimsState.lobbySubtitle || 'OVERALL STANDINGS').toUpperCase();
+      const matchLabel = `${scrimsState.matches.length} ${scrimsState.matches.length === 1 ? 'MATCH' : 'MATCHES'}`;
+
+      ctx.fillStyle = '#06b6d4';
+      ctx.font = '800 22px Inter, sans-serif';
+      ctx.fillText(`${subtitle}  •  ${matchLabel}`, 52, 68);
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '900 46px Inter, sans-serif';
+      ctx.fillText(title.slice(0, 28), 52, 124);
+
+      const tableTop = 166;
+      ctx.fillStyle = '#182238';
+      roundRect(ctx, 48, tableTop, width - 96, 54, 10, true, false);
+
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '800 20px Inter, sans-serif';
+      ctx.fillText('RANK', 72, tableTop + 34);
+      ctx.fillText('TEAM NAME', 178, tableTop + 34);
+      ctx.fillText('WWCD', 610, tableTop + 34);
+      ctx.fillText('PLACE', 725, tableTop + 34);
+      ctx.fillText('KILLS', 840, tableTop + 34);
+      ctx.fillText('TOTAL', 942, tableTop + 34);
+
+      standings.forEach((row, i) => {
+        const y = tableTop + 68 + i * 58;
+        if (i === 0) ctx.fillStyle = 'rgba(245, 158, 11, 0.22)';
+        else if (i === 1) ctx.fillStyle = 'rgba(148, 163, 184, 0.14)';
+        else if (i === 2) ctx.fillStyle = 'rgba(234, 88, 12, 0.16)';
+        else ctx.fillStyle = 'rgba(15, 23, 42, 0.75)';
+
+        roundRect(ctx, 48, y, width - 96, 48, 8, true, false);
+
+        ctx.fillStyle = i === 0 ? '#fbbf24' : '#f8fafc';
+        ctx.font = '800 23px Inter, sans-serif';
+        ctx.fillText(`#${i + 1}`, 78, y + 32);
+        ctx.fillText(row.team.slice(0, 22), 178, y + 32);
+
+        ctx.fillStyle = '#cbd5e1';
+        ctx.font = '700 22px Inter, sans-serif';
+        ctx.fillText(String(row.wwcd), 632, y + 32);
+        ctx.fillText(String(row.placePts), 746, y + 32);
+
+        ctx.fillStyle = '#22d3ee';
+        ctx.fillText(String(row.killPts), 858, y + 32);
+
+        ctx.fillStyle = '#fbbf24';
+        ctx.font = '900 25px Inter, sans-serif';
+        ctx.fillText(String(row.totalPts), 958, y + 33);
+      });
+
+      ctx.fillStyle = '#64748b';
+      ctx.font = '700 18px Inter, sans-serif';
+      ctx.fillText('OFFICIAL POINTS TABLE  •  INDIAN ESPORTS STUDIO', 52, height - 30);
+    }
+
+    function renderAllScrims() {
+      renderMatchBar();
+      renderMatchEntriesList();
+      renderStandingsTable();
+      renderStandingsCanvas();
+    }
+
+    function downloadStandingsPNG() {
+      renderStandingsCanvas();
+      const canvas = document.getElementById('standings-canvas');
+      const link = document.createElement('a');
+      link.download = 'Scrims_Points_Table.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      showToast('Downloaded Scrims_Points_Table.png');
+    }
+
+    function copyStandingsText() {
+      const standings = computeOverallStandings();
+      if (standings.length === 0) {
+        showToast('Add teams first before copying');
+        return;
+      }
+      const title = scrimsState.tourneyTitle || 'SCRIMS';
+      const sub = scrimsState.lobbySubtitle || 'OVERALL STANDINGS';
+      const matchText = `${scrimsState.matches.length} ${scrimsState.matches.length === 1 ? 'Match' : 'Matches'}`;
+
+      const lines = [
+        `🏆 *${title}* (${sub})`,
+        `📊 *Overall Standings — ${matchText}*`,
+        `────────────────────`
+      ];
+
+      standings.forEach((s, idx) => {
+        const rankIcon = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`;
+        lines.push(`${rankIcon} *${s.team}* — *${s.totalPts} pts* (WWCD: ${s.wwcd} | Place: ${s.placePts} | Finishes: ${s.killPts})`);
+      });
+
+      copyTextToClipboard(lines.join('\n'));
+    }
+
+    /* ==========================================================================
+       4. LFT & SQUAD ROSTER CARD MAKER ENGINE
+       ========================================================================== */
+    function hydrateLftInputs() {
+      document.getElementById('lft-game').value = lftState.game;
+      document.getElementById('lft-name').value = lftState.name;
+      document.getElementById('lft-role').value = lftState.role;
+      document.getElementById('lft-device').value = lftState.device;
+      document.getElementById('lft-stats').value = lftState.stats;
+      document.getElementById('lft-exp').value = lftState.exp;
+      document.getElementById('roster-p1').value = lftState.rosterP1;
+      document.getElementById('roster-p2').value = lftState.rosterP2;
+      document.getElementById('roster-p3').value = lftState.rosterP3;
+      document.getElementById('roster-p4').value = lftState.rosterP4;
+      document.getElementById('roster-sub').value = lftState.rosterSub;
+      document.getElementById('lft-avail').value = lftState.avail;
+      document.getElementById('lft-contact').value = lftState.contact;
+
+      applyCardModeUI(lftState.cardMode);
+      highlightSwatch(lftState.accentColor);
+    }
+
+    function handleLftChange() {
+      lftState.game = document.getElementById('lft-game').value;
+      lftState.name = document.getElementById('lft-name').value;
+      lftState.role = document.getElementById('lft-role').value;
+      lftState.device = document.getElementById('lft-device').value;
+      lftState.stats = document.getElementById('lft-stats').value;
+      lftState.exp = document.getElementById('lft-exp').value;
+      lftState.rosterP1 = document.getElementById('roster-p1').value;
+      lftState.rosterP2 = document.getElementById('roster-p2').value;
+      lftState.rosterP3 = document.getElementById('roster-p3').value;
+      lftState.rosterP4 = document.getElementById('roster-p4').value;
+      lftState.rosterSub = document.getElementById('roster-sub').value;
+      lftState.avail = document.getElementById('lft-avail').value;
+      lftState.contact = document.getElementById('lft-contact').value;
+
+      saveToStorage(STORAGE_KEY_LFT, lftState);
+      renderLftCanvas();
+    }
+
+    function applyCardModeUI(mode) {
+      const isPlayer = mode === 'player';
+      const btnPlayer = document.getElementById('mode-player-btn');
+      const btnRoster = document.getElementById('mode-roster-btn');
+
+      btnPlayer.className = isPlayer
+        ? 'p-2.5 rounded-lg text-xs font-extrabold bg-surfaceLight text-white border border-borderDark transition-all min-h-[42px]'
+        : 'p-2.5 rounded-lg text-xs font-extrabold text-slate-400 hover:text-white transition-all min-h-[42px]';
+
+      btnRoster.className = !isPlayer
+        ? 'p-2.5 rounded-lg text-xs font-extrabold bg-surfaceLight text-white border border-borderDark transition-all min-h-[42px]'
+        : 'p-2.5 rounded-lg text-xs font-extrabold text-slate-400 hover:text-white transition-all min-h-[42px]';
+
+      document.getElementById('player-fields').classList.toggle('hidden', !isPlayer);
+      document.getElementById('roster-fields').classList.toggle('hidden', isPlayer);
+      document.getElementById('lft-name-label').textContent = isPlayer ? 'Player IGN' : 'Squad / Clan Name';
+    }
+
+    function setCardMode(mode) {
+      lftState.cardMode = mode;
+      applyCardModeUI(mode);
+
+      const nameEl = document.getElementById('lft-name');
+      if (mode === 'roster' && nameEl.value === 'REAPERxIGL') {
+        nameEl.value = 'TEAM VORTEX IN';
+        lftState.name = 'TEAM VORTEX IN';
+      } else if (mode === 'player' && nameEl.value === 'TEAM VORTEX IN') {
+        nameEl.value = 'REAPERxIGL';
+        lftState.name = 'REAPERxIGL';
+      }
+
+      saveToStorage(STORAGE_KEY_LFT, lftState);
+      renderLftCanvas();
+    }
+
+    function highlightSwatch(hex) {
+      document.querySelectorAll('#swatch-row button').forEach((btn) => {
+        if (btn.getAttribute('data-color') === hex) {
+          btn.classList.add('ring-2', 'ring-white', 'scale-105');
+          btn.classList.remove('opacity-80');
+        } else {
+          btn.classList.remove('ring-2', 'ring-white', 'scale-105');
+          btn.classList.add('opacity-80');
+        }
+      });
+    }
+
+    function selectAccentColor(hex) {
+      lftState.accentColor = hex;
+      highlightSwatch(hex);
+      saveToStorage(STORAGE_KEY_LFT, lftState);
+      renderLftCanvas();
+    }
+
+    function loadLftDemo() {
+      const currentMode = lftState.cardMode;
+      lftState = createDefaultLftState();
+      lftState.cardMode = currentMode;
+      if (currentMode === 'roster') {
+        lftState.name = 'TEAM VORTEX IN';
+      }
+      hydrateLftInputs();
+      saveToStorage(STORAGE_KEY_LFT, lftState);
+      renderLftCanvas();
+      showToast('Sample esports profile loaded');
+    }
+
+    function renderLftCanvas() {
+      const canvas = document.getElementById('lft-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+
+      const size = 1080;
+      canvas.width = size;
+      canvas.height = size;
+
+      const accent = lftState.accentColor || '#f59e0b';
+      const game = (lftState.game || 'BGMI').toUpperCase();
+      const headline = (lftState.name || 'PLAYER IGN').toUpperCase();
+      const avail = lftState.avail || 'Daily Scrims';
+      const contact = lftState.contact || '@handle';
+
+      const grad = ctx.createLinearGradient(0, 0, size, size);
+      grad.addColorStop(0, '#070910');
+      grad.addColorStop(0.55, '#10172b');
+      grad.addColorStop(1, '#080c17');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, size, size);
+
+      ctx.fillStyle = accent + '24';
+      ctx.beginPath();
+      ctx.moveTo(620, 0);
+      ctx.lineTo(1080, 0);
+      ctx.lineTo(1080, 520);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
+      ctx.lineWidth = 2;
+      for (let gx = 90; gx < size; gx += 90) {
+        ctx.beginPath();
+        ctx.moveTo(gx, 0);
+        ctx.lineTo(gx, size);
+        ctx.stroke();
+      }
+
+      ctx.strokeStyle = accent;
+      ctx.lineWidth = 8;
+      roundRect(ctx, 36, 36, size - 72, size - 72, 28, false, true);
+
+      ctx.fillStyle = accent;
+      roundRect(ctx, 76, 82, 460, 54, 12, true, false);
+      ctx.fillStyle = '#070910';
+      ctx.font = '900 23px Inter, sans-serif';
+      const pillLabel = lftState.cardMode === 'player'
+        ? `${game}  •  LOOKING FOR TEAM`
+        : `${game}  •  OFFICIAL SQUAD ROSTER`;
+      ctx.fillText(pillLabel, 98, 117);
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '900 70px Inter, sans-serif';
+      ctx.fillText(headline.slice(0, 18), 76, 226);
+
+      ctx.fillStyle = accent;
+      ctx.fillRect(76, 254, 190, 8);
+
+      if (lftState.cardMode === 'player') {
+        const infoCards = [
+          { label: 'PRIMARY ROLE', val: lftState.role || 'IGL' },
+          { label: 'DEVICE & PERFORMANCE', val: lftState.device || '120 FPS Device' },
+          { label: 'PEAK RANK / K/D RATIO', val: lftState.stats || 'Conqueror' },
+          { label: 'COMPETITIVE EXPERIENCE', val: lftState.exp || 'T1/T2 Scrims' }
+        ];
+
+        infoCards.forEach((item, idx) => {
+          const y = 302 + idx * 124;
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
+          roundRect(ctx, 76, y, size - 152, 102, 16, true, false);
+
+          ctx.fillStyle = accent;
+          ctx.font = '800 20px Inter, sans-serif';
+          ctx.fillText(item.label, 104, y + 36);
+
+          ctx.fillStyle = '#f8fafc';
+          ctx.font = '800 32px Inter, sans-serif';
+          ctx.fillText(item.val.slice(0, 34), 104, y + 78);
+        });
+      } else {
+        const squadSlots = [
+          { slot: '01 • IGL', player: lftState.rosterP1 || 'PLAYER 1' },
+          { slot: '02 • ASSAULTER', player: lftState.rosterP2 || 'PLAYER 2' },
+          { slot: '03 • SUPPORT', player: lftState.rosterP3 || 'PLAYER 3' },
+          { slot: '04 • SNIPER / ENTRY', player: lftState.rosterP4 || 'PLAYER 4' },
+          { slot: '05 • SUB / TRYOUT', player: lftState.rosterSub || '5TH SUB' }
+        ];
+
+        squadSlots.forEach((item, idx) => {
+          const y = 298 + idx * 102;
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
+          roundRect(ctx, 76, y, size - 152, 84, 14, true, false);
+
+          ctx.fillStyle = accent;
+          ctx.font = '800 20px Inter, sans-serif';
+          ctx.fillText(item.slot, 104, y + 50);
+
+          ctx.fillStyle = '#ffffff';
+          ctx.font = '900 31px Inter, sans-serif';
+          ctx.fillText(item.player.toUpperCase().slice(0, 24), 415, y + 52);
+        });
+      }
+
+      ctx.fillStyle = accent + '26';
+      roundRect(ctx, 76, 835, size - 152, 118, 18, true, false);
+
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '800 19px Inter, sans-serif';
+      ctx.fillText('GRIND AVAILABILITY', 104, 878);
+      ctx.fillText('DM / CONTACT HANDLE', 575, 878);
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '800 28px Inter, sans-serif';
+      ctx.fillText(avail.slice(0, 24), 104, 922);
+
+      ctx.fillStyle = accent;
+      ctx.fillText(contact.slice(0, 22), 575, 922);
+
+      ctx.fillStyle = '#64748b';
+      ctx.font = '700 18px Inter, sans-serif';
+      ctx.fillText('INDIAN ESPORTS STUDIO  •  VERIFIED PROFILE CARD', 76, 1004);
+    }
+
+    function downloadLftPNG() {
+      renderLftCanvas();
+      const canvas = document.getElementById('lft-canvas');
+      const link = document.createElement('a');
+      link.download = lftState.cardMode === 'player' ? 'Esports_LFT_Card.png' : 'Esports_Squad_Roster.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      showToast('Downloaded HD Card PNG');
+    }
+
+    function copyLftCaption() {
+      let post = '';
+      if (lftState.cardMode === 'player') {
+        post = [
+          `🎮 *${lftState.game} — LOOKING FOR TEAM (LFT)*`,
+          `👤 IGN: *${lftState.name}*`,
+          `🎯 Role: *${lftState.role}*`,
+          `📱 Device: ${lftState.device}`,
+          `📊 Stats: ${lftState.stats}`,
+          `🏆 Experience: ${lftState.exp}`,
+          `⏰ Timing: ${lftState.avail}`,
+          `📩 DM for trials: ${lftState.contact}`
+        ].join('\n');
+      } else {
+        post = [
+          `🛡️ *${lftState.game} — OFFICIAL SQUAD ROSTER*`,
+          `🔥 Lineup: *${lftState.name}*`,
+          `• IGL: ${lftState.rosterP1}`,
+          `• Assaulter: ${lftState.rosterP2}`,
+          `• Support: ${lftState.rosterP3}`,
+          `• Sniper/Entry: ${lftState.rosterP4}`,
+          `• 5th / Sub: *${lftState.rosterSub}*`,
+          `⏰ Scrim Hours: ${lftState.avail}`,
+          `📩 Scrims / Tryouts DM: ${lftState.contact}`
+        ].join('\n');
+      }
+      copyTextToClipboard(post);
+    }
+
+    /* ==========================================================================
+       5. KIE HUB, RANKINGS, PLAYER TRACKER & MOBILE EDITOR
+       ========================================================================== */
+    function setKieFilter(filterKey, btnEl) {
+      kieFilter = filterKey;
+      document.querySelectorAll('.kie-filter-btn').forEach((btn) => {
+        btn.className = 'kie-filter-btn px-3 py-2 rounded-xl text-xs font-bold bg-void border border-borderDark text-slate-300 hover:text-white min-h-[40px]';
+      });
+      if (btnEl) {
+        btnEl.className = 'kie-filter-btn px-3 py-2 rounded-xl text-xs font-extrabold bg-amber-500 text-slate-950 min-h-[40px]';
+      }
+      renderKieHub();
+    }
+
+    function toggleKieEditor() {
+      const panel = document.getElementById('kie-editor-panel');
+      const isOpening = panel.classList.contains('hidden');
+      panel.classList.toggle('hidden');
+      if (isOpening) {
+        syncJsonTextareaFromState();
+      }
+    }
+
+    function syncJsonTextareaFromState() {
+      const ta = document.getElementById('kie-json-area');
+      if (ta) {
+        ta.value = JSON.stringify(kieState, null, 2);
+      }
+    }
+
+    function applyJsonFromTextarea() {
+      const ta = document.getElementById('kie-json-area');
+      try {
+        const parsed = JSON.parse(ta.value);
+        if (!Array.isArray(parsed.tournaments) || !Array.isArray(parsed.teams) || !parsed.playerProfile) {
+          showToast('JSON must include tournaments, teams, and playerProfile');
+          return;
+        }
+        kieState = parsed;
+        saveToStorage(STORAGE_KEY_KIE, kieState);
+        renderKieHub();
+        showToast('Updated KIE dataset from JSON!');
+      } catch (err) {
+        showToast('Invalid JSON syntax — check brackets and commas');
+      }
+    }
+
+    function handleQuickTeamUpdate(event) {
+      event.preventDefault();
+      const teamName = document.getElementById('kie-edit-team').value.trim();
+      const pts = Math.max(0, parseInt(document.getElementById('kie-edit-pts').value, 10) || 0);
+      const note = document.getElementById('kie-edit-tag').value.trim() || 'Updated Standings';
+      const form = document.getElementById('kie-edit-delta').value.trim() || 'Active Circuit';
+
+      if (!teamName) return;
+
+      const idx = kieState.teams.findIndex((t) => t.team.toLowerCase() === teamName.toLowerCase());
+      if (idx >= 0) {
+        kieState.teams[idx] = { team: teamName, points: pts, note, form };
+        showToast(`Updated ${teamName} (${pts} pts)`);
+      } else {
+        kieState.teams.push({ team: teamName, points: pts, note, form });
+        showToast(`Added ${teamName} (${pts} pts)`);
+      }
+
+      document.getElementById('kie-edit-team').value = '';
+      document.getElementById('kie-edit-pts').value = '';
+      document.getElementById('kie-edit-tag').value = '';
+      document.getElementById('kie-edit-delta').value = '';
+
+      saveToStorage(STORAGE_KEY_KIE, kieState);
+      syncJsonTextareaFromState();
+      renderKieHub();
+    }
+
+    function handleQuickTourneyAdd(event) {
+      event.preventDefault();
+      const name = document.getElementById('kie-t-name').value.trim();
+      const category = document.getElementById('kie-t-cat').value;
+      const dates = document.getElementById('kie-t-dates').value.trim();
+      const scale = document.getElementById('kie-t-tier').value.trim();
+
+      if (!name || !dates || !scale) return;
+
+      kieState.tournaments.unshift({
+        name,
+        category,
+        dates,
+        scale,
+        status: 'Custom Added'
+      });
+
+      document.getElementById('kie-t-name').value = '';
+      document.getElementById('kie-t-dates').value = '';
+      document.getElementById('kie-t-tier').value = '';
+
+      saveToStorage(STORAGE_KEY_KIE, kieState);
+      syncJsonTextareaFromState();
+      renderKieHub();
+      showToast(`Added tournament: ${name}`);
+    }
+
+    function handleAddPlayerEvent(event) {
+      event.preventDefault();
+      const evtName = document.getElementById('p-evt-name').value.trim();
+      const evtPos = document.getElementById('p-evt-pos').value.trim();
+      const evtPts = Math.max(0, parseInt(document.getElementById('p-evt-pts').value, 10) || 0);
+
+      if (!evtName || !evtPos) return;
+
+      kieState.playerProfile.events.unshift({
+        event: evtName,
+        position: evtPos,
+        points: evtPts
+      });
+
+      document.getElementById('p-evt-name').value = '';
+      document.getElementById('p-evt-pos').value = '';
+      document.getElementById('p-evt-pts').value = '';
+
+      saveToStorage(STORAGE_KEY_KIE, kieState);
+      syncJsonTextareaFromState();
+      renderKieHub();
+      showToast(`Logged ${evtName} for ${kieState.playerProfile.name}`);
+    }
+
+    function removePlayerEvent(index) {
+      kieState.playerProfile.events.splice(index, 1);
+      saveToStorage(STORAGE_KEY_KIE, kieState);
+      syncJsonTextareaFromState();
+      renderKieHub();
+    }
+
+    function resetKieData() {
+      kieState = createDefaultKieState();
+      saveToStorage(STORAGE_KEY_KIE, kieState);
+      syncJsonTextareaFromState();
+      renderKieHub();
+      showToast('Restored default KIE tournaments & rankings');
+    }
+
+    function renderKieHub() {
+      const query = (document.getElementById('kie-search-input').value || '').trim().toLowerCase();
+
+      const tourneyCol = document.getElementById('kie-tournaments-col');
+      const rankingsCol = document.getElementById('kie-rankings-col');
+
+      if (kieFilter === 'Rankings') {
+        tourneyCol.classList.add('hidden');
+        rankingsCol.classList.remove('hidden');
+        rankingsCol.classList.remove('lg:col-span-6');
+        rankingsCol.classList.add('lg:col-span-12');
+      } else {
+        tourneyCol.classList.remove('hidden');
+        rankingsCol.classList.remove('hidden');
+        tourneyCol.classList.add('lg:col-span-6');
+        rankingsCol.classList.remove('lg:col-span-12');
+        rankingsCol.classList.add('lg:col-span-6');
+      }
+
+      // 1. Render Tournaments
+      const filteredTourneys = kieState.tournaments.filter((t) => {
+        const matchesCat =
+          kieFilter === 'all' ||
+          kieFilter === 'Rankings' ||
+          t.category.toLowerCase() === kieFilter.toLowerCase();
+        const matchesQuery =
+          !query ||
+          t.name.toLowerCase().includes(query) ||
+          t.dates.toLowerCase().includes(query) ||
+          t.scale.toLowerCase().includes(query) ||
+          t.category.toLowerCase().includes(query);
+        return matchesCat && matchesQuery;
+      });
+
+      const tList = document.getElementById('kie-tournaments-list');
+      document.getElementById('kie-tourney-count').textContent = `${filteredTourneys.length} Events`;
+      tList.innerHTML = '';
+
+      if (filteredTourneys.length === 0) {
+        tList.innerHTML = '<div class="p-4 rounded-xl bg-void border border-borderDark text-xs text-slate-400 text-center">No matching tournaments found.</div>';
+      } else {
+        filteredTourneys.forEach((t) => {
+          const isOfficial = t.category === 'Official';
+          const badgeCls = isOfficial
+            ? 'bg-amber-500/15 border-amber-500/40 text-amber-300'
+            : 'bg-cyan-500/15 border-cyan-500/40 text-cyan-300';
+
+          const card = document.createElement('div');
+          card.className = 'p-3.5 rounded-xl bg-void border border-borderDark space-y-1.5';
+          card.innerHTML = `
+            <div class="flex items-start justify-between gap-2">
+              <div class="font-extrabold text-sm text-white">${escapeHtml(t.name)}</div>
+              <span class="px-2 py-0.5 rounded-md border text-[10px] font-extrabold uppercase shrink-0 ${badgeCls}">
+                ${escapeHtml(t.category)}
+              </span>
+            </div>
+            <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-300">
+              <span class="font-semibold text-amber-300">📅 ${escapeHtml(t.dates)}</span>
+              <span class="text-slate-400">• ${escapeHtml(t.scale)}</span>
+            </div>
+            <div class="text-[11px] font-bold text-emerald-400">${escapeHtml(t.status)}</div>
+          `;
+          tList.appendChild(card);
+        });
+      }
+
+      // 2. Render Sorted KIE Teams
+      const sortedTeams = [...kieState.teams]
+        .sort((a, b) => b.points - a.points)
+        .filter((tm) => !query || tm.team.toLowerCase().includes(query) || tm.note.toLowerCase().includes(query));
+
+      const teamsTbody = document.getElementById('kie-teams-tbody');
+      teamsTbody.innerHTML = '';
+
+      if (sortedTeams.length === 0) {
+        teamsTbody.innerHTML = '<tr><td colspan="4" class="py-5 px-3 text-center text-xs text-slate-400">No matching teams found.</td></tr>';
+      } else {
+        sortedTeams.forEach((tm, idx) => {
+          const rank = idx + 1;
+          let badge = 'bg-surfaceLight text-slate-200';
+          if (rank === 1) badge = 'bg-amber-400 text-slate-950';
+          else if (rank === 2) badge = 'bg-slate-200 text-slate-950';
+          else if (rank === 3) badge = 'bg-orange-500 text-white';
+
+          const tr = document.createElement('tr');
+          tr.className = rank === 1 ? 'bg-amber-500/10' : '';
+          tr.innerHTML = `
+            <td class="py-2.5 px-2.5">
+              <span class="inline-flex items-center justify-center w-6 h-6 rounded-md text-xs font-black ${badge}">${rank}</span>
+            </td>
+            <td class="py-2.5 px-2.5">
+              <div class="font-bold text-white">${escapeHtml(tm.team)}</div>
+              <div class="text-[11px] text-slate-400 sm:hidden">${escapeHtml(tm.note)}</div>
+            </td>
+            <td class="py-2.5 px-2 text-xs text-slate-300 hidden sm:table-cell">${escapeHtml(tm.note)}</td>
+            <td class="py-2.5 px-2.5 text-right font-black text-amber-400">${tm.points.toLocaleString()} pts</td>
+          `;
+          teamsTbody.appendChild(tr);
+        });
+      }
+
+      // 3. Render Player Profile Events
+      const pInfo = kieState.playerProfile;
+      document.getElementById('kie-player-badge').textContent = `${pInfo.name} (${pInfo.ign})`;
+
+      const evList = document.getElementById('kie-player-events');
+      evList.innerHTML = '';
+
+      const visibleEvents = pInfo.events.filter(
+        (e) => !query || e.event.toLowerCase().includes(query) || pInfo.name.toLowerCase().includes(query) || pInfo.ign.toLowerCase().includes(query)
+      );
+
+      if (visibleEvents.length === 0) {
+        evList.innerHTML = '<div class="p-3 rounded-xl bg-void border border-borderDark text-xs text-slate-400 text-center">No player events logged yet.</div>';
+      } else {
+        visibleEvents.forEach((ev) => {
+          const realIdx = pInfo.events.indexOf(ev);
+          const row = document.createElement('div');
+          row.className = 'flex items-center justify-between gap-2 p-2.5 rounded-xl bg-void border border-borderDark text-xs';
+          row.innerHTML = `
+            <div>
+              <span class="font-extrabold text-white">${escapeHtml(ev.event)}</span>
+              <span class="text-slate-400 ml-2">Pos: <strong class="text-cyan-300">${escapeHtml(ev.position)}</strong></span>
+              <span class="text-slate-400 ml-2">Pts: <strong class="text-amber-400">${ev.points}</strong></span>
+            </div>
+            <button type="button" onclick="removePlayerEvent(${realIdx})"
+                    class="px-2 py-1 rounded-lg bg-rose-500/15 border border-rose-500/30 text-rose-300 text-[11px] font-bold">
+              ✕
+            </button>
+          `;
+          evList.appendChild(row);
+        });
+      }
+    }
+
+    /* ==========================================================================
+       6. SHARED CANVAS & CLIPBOARD HELPERS
+       ========================================================================== */
+    function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
+      ctx.beginPath();
+      ctx.moveTo(x + radius, y);
+      ctx.lineTo(x + width - radius, y);
+      ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+      ctx.lineTo(x + width, y + height - radius);
+      ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+      ctx.lineTo(x + radius, y + height);
+      ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+      ctx.lineTo(x, y + radius);
+      ctx.quadraticCurveTo(x, y, x + radius, y);
+      ctx.closePath();
+      if (fill) ctx.fill();
+      if (stroke) ctx.stroke();
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function copyTextToClipboard(text) {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        document.execCommand('copy');
+        showToast('Copied to clipboard! Ready to paste.');
+      } catch (err) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(() => showToast('Copied to clipboard!'));
+        }
+      }
+      document.body.removeChild(textarea);
+    }
+
+    /* ==========================================================================
+       7. INITIALIZE ON WINDOW LOAD
+       ========================================================================== */
+    window.onload = function () {
+      hydrateScrimsInputs();
+      renderAllScrims();
+      hydrateLftInputs();
+      renderLftCanvas();
+      renderKieHub();
+      syncJsonTextareaFromState();
+    };
+  </script>
+</body>
+  </html>
